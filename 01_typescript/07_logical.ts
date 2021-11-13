@@ -1,15 +1,18 @@
-const a = !true;
+// NOT
+const a = !true; // false
 
 console.log(a);
 
-const b = !!true;
+const b = !!true; // true
 
 console.log(b);
 
-const c = true && true;
+// AND
+const c = true && true; // true
 
 console.log(c);
 
-const d = false || false;
+// OR
+const d = false || false; // false
 
 console.log(d);

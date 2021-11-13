@@ -1,3 +1,4 @@
+// Number, String, Boolean, Undefined, Null
 const num = 1;
 
 console.log(num);
