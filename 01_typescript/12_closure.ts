@@ -3,7 +3,7 @@ const outer = () => {
 
   const inner = () => {
     console.log(a);
-    // 메모리에서 a를 사용할 수 있다.
+    // outer에서 선언된 a = 10을 inner에서 사용할 수 있음.
   };
   return inner;
 };
