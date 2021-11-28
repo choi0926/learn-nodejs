@@ -5,21 +5,17 @@ const todos = [
   { id: 4, text: 'Express', isDone: false },
 ];
 
-//findIndex 조건에 맞는 index return
+//findIndex 조건에 맞는 index값 return
 const index = todos.findIndex((todo) => {
-  console.log(todo);
-
   return todo.id === 3;
 });
 
-console.log(index);
+console.log(index); //2
 
 //find 조건에 맞는 객체 return
 const todo = todos.find((todo) => {
-  console.log(todo);
-
   return todo.id === 3;
 });
 
 console.log();
-console.log(todo);
+console.log(todo); // { id: 3, text: 'NodeJS', isDone: false }

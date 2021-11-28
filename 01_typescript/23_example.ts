@@ -42,5 +42,7 @@ const filterResult = (number: number) => {
 
 console.log(filterResult(3));
 
-//*이벤트 버블링
-// * 16 ~ 22 까지는 중요 **
+const func = (a: number, b: number) => {
+  return a + b;
+};
+const func1 = (a: number, b: number) => a + b;
