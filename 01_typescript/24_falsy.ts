@@ -1,5 +1,5 @@
-console.log(!!undefined);
-console.log(!!null);
-console.log(!!0);
-console.log(!!'');
-console.log(!!NaN);
+console.log(!!undefined); //false
+console.log(!!null); //false
+console.log(!!0); //false
+console.log(!!''); //false
+console.log(!!NaN); //false
