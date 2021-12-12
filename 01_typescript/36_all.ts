@@ -19,7 +19,8 @@ const main = async () => {
   console.log(`시작 시간 : ${startTime}`);
   console.log();
 
-  const [date1, date2] = await Promise.all([work(1000), work(2000)]); // 제일 긴 시간을 마지막으로 실행 종료
+  const [date1, date2] = await Promise.all([work(1000), work(2000)]);
+  // 가장 긴 실행 시간을 마지막으로 실행 종료
 
   console.log(`첫 번째 작업 : ${date1}`);
   console.log(`두 번째 작업 : ${date2}`);

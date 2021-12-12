@@ -20,7 +20,7 @@ const main = async () => {
   console.log();
 
   const date = await Promise.race([work(1000), work(2000)]);
-  // 먼저 실행완료된 결과
+  // 가장 먼저 실행이 완료된 결과값
 
   console.log(`완료된 작업 : ${date}`);
 

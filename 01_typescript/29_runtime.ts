@@ -5,3 +5,7 @@ console.log('start');
 setTimeout(callback, 0);
 
 console.log('end');
+
+// start
+// end
+// setTimeOut

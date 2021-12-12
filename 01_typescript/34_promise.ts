@@ -3,8 +3,8 @@ const work = (ms: number) => {
     setTimeout(() => {
       const now = new Date().toISOString();
 
-      // resolve(now);
-      reject(new Error('Error Message'));
+      resolve(now);
+      // reject(new Error('Error Message'));
     }, ms);
   });
 };
