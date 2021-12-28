@@ -17,6 +17,8 @@ app.use((req, res) => {
 
 // eslint-disable-next-line no-unused-vars
 app.use((err: Error, req: Request, res: Response, nex: NextFunction) => {
+  console.error(err);
+
   res.status(500).send('Internal Server Error');
 });
 
