@@ -8,7 +8,7 @@ app.set('port', 3000);
 
 app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
 app.use(express.static(path.join(__dirname, 'public')));
-// * 디렉터리 경로를 사용할때는 path 사용
+// *디렉터리 경로를 사용할때는 path 사용
 
 app.use((req, res) => {
   res.status(404).send('NOT FOUND');
