@@ -8,13 +8,7 @@ interface ITodo {
   isComplete: boolean;
 }
 
-const todos: ITodo[] = [
-  {
-    id: '1',
-    content: 'hello',
-    isComplete: false,
-  },
-];
+const todos: ITodo[] = [];
 
 const app = express();
 
