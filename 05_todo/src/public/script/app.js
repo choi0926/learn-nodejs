@@ -4,20 +4,39 @@ const todos = [];
 
 const form = document.querySelector('form');
 const input = form.querySelector('input');
+const submitButton = form.querySelector('button');
+let target;
 
 const createTodo = (todo) => {
   todos.push(todo);
 
+  const div = document.querySelector('div');
+  const deleteAllButton = document.createElement('button');
   const ul = document.querySelector('ul');
   const li = document.createElement('li');
   const checkbox = document.createElement('input');
   const span = document.createElement('span');
   const button = document.createElement('button');
 
+  deleteAllButton.className = 'deleteAll';
+  deleteAllButton.innerText = 'Delete All';
   checkbox.type = 'checkbox';
   checkbox.checked = todo.isComplete;
   span.innerText = todo.content;
   button.innerText = 'Delete';
+
+  deleteAllButton.addEventListener('click', async () => {
+    try {
+      const { data } = await axios.delete('/api/todos');
+      if (data.isSuccess) {
+        div.removeChild(deleteAllButton);
+        todos.splice(0, todos.length);
+        ul.innerHTML = '';
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  });
 
   checkbox.addEventListener('click', async (event) => {
     try {
@@ -27,6 +46,18 @@ const createTodo = (todo) => {
         const index = todos.findIndex(({ id }) => id === todo.id);
         todos[index].isComplete = isComplete;
       }
+    } catch (err) {
+      console.error(err);
+    }
+  });
+
+  span.addEventListener('click', async (event) => {
+    try {
+      const content = event.target.innerText;
+      input.value = content;
+      submitButton.innerText = 'update';
+      submitButton.value = todo.id;
+      target = span;
     } catch (err) {
       console.error(err);
     }
@@ -45,6 +76,10 @@ const createTodo = (todo) => {
     }
   });
 
+  if (todos.length > 0 && todos.length < 2) {
+    div.appendChild(deleteAllButton);
+  }
+
   li.appendChild(checkbox);
   li.appendChild(span);
   li.appendChild(button);
@@ -55,14 +90,25 @@ const createTodo = (todo) => {
 form.addEventListener('submit', async (event) => {
   try {
     event.preventDefault();
-
-    const { data } = await axios.post('/api/todos', { content: input.value });
-
-    if (data.isSuccess) {
-      createTodo(data.todo);
-
-      input.value = '';
+    if (submitButton.innerText === 'create') {
+      const { data } = await axios.post('/api/todos', { content: input.value });
+      if (data.isSuccess) {
+        createTodo(data.todo);
+      }
     }
+
+    if (submitButton.innerText === 'update') {
+      const { data } = await axios.put(`/api/todos/${submitButton.value}`, {
+        content: input.value,
+      });
+      if (data.isSuccess) {
+        const index = todos.findIndex(({ id }) => id === submitButton.value);
+        todos[index].content = input.value;
+        target.innerText = input.value;
+        submitButton.innerText = 'create';
+      }
+    }
+    input.value = '';
   } catch (err) {
     console.error(err);
   }

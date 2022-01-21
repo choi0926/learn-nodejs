@@ -51,15 +51,16 @@ interface IUpdateTodoRequest extends Request {
   };
   body: {
     isComplete: boolean;
+    content: string;
   };
 }
 
 // params는 미들웨어가 필요없음
 app.put('/api/todos/:id', (req: IUpdateTodoRequest, res) => {
   const { id } = req.params;
-  const { isComplete } = req.body;
+  const { isComplete, content } = req.body;
 
-  if (!id || isComplete === undefined) {
+  if (!id) {
     return res.json({ isSuccess: false });
   }
 
@@ -68,9 +69,14 @@ app.put('/api/todos/:id', (req: IUpdateTodoRequest, res) => {
     return res.json({ isSuccess: false });
   }
 
-  todos[index].isComplete = isComplete;
+  if (isComplete !== undefined) {
+    todos[index].isComplete = isComplete;
+  }
 
-  console.log(isComplete);
+  if (content) {
+    todos[index].content = content;
+  }
+
   return res.json({ isSuccess: true });
 });
 
@@ -90,9 +96,14 @@ app.delete('/api/todos/:id', (req: IDeleteTodoRequest, res) => {
   if (index === -1) {
     return res.json({ isSuccess: false });
   }
-
   todos.splice(index, 1);
   // index 위치에서 1개 삭제
+
+  return res.json({ isSuccess: true });
+});
+
+app.delete('/api/todos', (req, res) => {
+  todos.splice(0, todos.length);
 
   return res.json({ isSuccess: true });
 });

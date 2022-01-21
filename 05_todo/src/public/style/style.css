@@ -17,10 +17,6 @@ ul {
   margin-top: 10px;
 }
 
-ul > li {
-  margin-top: 5px;
-}
-
 li > span {
   margin-left: 5px;
 }
@@ -29,5 +25,8 @@ li > button {
   margin-left: 5px;
 }
 
+.deleteAll {
+  margin-top: 10px;
+}
 /* 아래, 오른쪽 기준으로 간격을 지정한다 */
 /* >는 3개 이상 사용하지않는다. */
