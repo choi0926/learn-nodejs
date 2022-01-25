@@ -12,6 +12,7 @@ const createTodo = (todo) => {
 
   const div = document.querySelector('div');
   const deleteAllButton = document.createElement('button');
+  const checkedDeleteButton = document.createElement('button');
   const ul = document.querySelector('ul');
   const li = document.createElement('li');
   const checkbox = document.createElement('input');
@@ -20,6 +21,7 @@ const createTodo = (todo) => {
 
   deleteAllButton.className = 'deleteAll';
   deleteAllButton.innerText = 'Delete All';
+  checkedDeleteButton.innerText = 'Checked Delete';
   checkbox.type = 'checkbox';
   checkbox.checked = todo.isComplete;
   span.innerText = todo.content;
@@ -29,9 +31,42 @@ const createTodo = (todo) => {
     try {
       const { data } = await axios.delete('/api/todos');
       if (data.isSuccess) {
-        div.removeChild(deleteAllButton);
+        div.innerHTML = '';
         todos.splice(0, todos.length);
         ul.innerHTML = '';
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  });
+
+  checkedDeleteButton.addEventListener('click', async () => {
+    try {
+      const ids = todos.reduce((result, todo) => {
+        if (todo.isComplete) {
+          return [...result, todo.id];
+        }
+
+        return result;
+      }, []);
+
+      const { data } = await axios.delete(`/api/todos/${ids.join(',')}`);
+      if (data.isSuccess) {
+        const indexes = todos.reduce((result, todo, index) => {
+          if (ids.includes(todo.id)) {
+            return [index, ...result];
+          }
+
+          return result;
+        }, []);
+
+        indexes.forEach((index) => {
+          todos.splice(index, 1);
+          ul.removeChild(ul.children[index]);
+        });
+        if (todos.length === 0) {
+          div.innerHTML = '';
+        }
       }
     } catch (err) {
       console.error(err);
@@ -70,6 +105,9 @@ const createTodo = (todo) => {
         const index = todos.findIndex(({ id }) => id === todo.id);
         todos.splice(index, 1);
         ul.removeChild(li);
+        if (todos.length === 0) {
+          div.innerHTML = '';
+        }
       }
     } catch (err) {
       console.error(err);
@@ -78,6 +116,7 @@ const createTodo = (todo) => {
 
   if (todos.length > 0 && todos.length < 2) {
     div.appendChild(deleteAllButton);
+    div.appendChild(checkedDeleteButton);
   }
 
   li.appendChild(checkbox);

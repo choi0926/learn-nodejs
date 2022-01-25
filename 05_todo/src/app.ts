@@ -82,22 +82,31 @@ app.put('/api/todos/:id', (req: IUpdateTodoRequest, res) => {
 
 interface IDeleteTodoRequest extends Request {
   params: {
-    id: string;
+    ids: string;
   };
 }
 
-app.delete('/api/todos/:id', (req: IDeleteTodoRequest, res) => {
-  const { id } = req.params;
-  if (!id) {
+app.delete('/api/todos/:ids', (req: IDeleteTodoRequest, res) => {
+  const ids = req.params.ids.split(',');
+  if (!ids) {
     return res.json({ isSuccess: false });
   }
 
-  const index = todos.findIndex((todo) => todo.id === id);
-  if (index === -1) {
+  const indexes = todos.reduce((result, todo, index) => {
+    if (ids.includes(todo.id)) {
+      return [index, ...result];
+    }
+
+    return result;
+  }, [] as number[]);
+
+  if (ids.length !== indexes.length) {
     return res.json({ isSuccess: false });
   }
-  todos.splice(index, 1);
-  // index 위치에서 1개 삭제
+
+  indexes.forEach((index) => {
+    todos.splice(index, 1);
+  });
 
   return res.json({ isSuccess: true });
 });
