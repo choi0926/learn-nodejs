@@ -2,6 +2,7 @@ import express, { NextFunction, Request, Response } from 'express';
 import morgan from 'morgan';
 import path from 'path';
 import { nanoid } from 'nanoid';
+import e from 'express';
 
 interface ITodo {
   id: string;
@@ -35,7 +36,7 @@ interface ICreateTodoRequest extends Request {
 app.post('/api/todos', (req: ICreateTodoRequest, res) => {
   const { content } = req.body;
 
-  if (!content && typeof content !== 'string') {
+  if (content === undefined || typeof content !== 'string' || !content.trim()) {
     return res.json({ isSuccess: false });
   }
 
@@ -58,9 +59,20 @@ interface IUpdateTodoRequest extends Request {
 // params는 미들웨어가 필요없음
 app.put('/api/todos/:id', (req: IUpdateTodoRequest, res) => {
   const { id } = req.params;
+  if (Object.keys(req.body).length === 0) {
+    return res.json({ isSuccess: false });
+  }
+
   const { isComplete, content } = req.body;
 
-  if (!id) {
+  if (
+    content !== undefined &&
+    (typeof content !== 'string' || !content.trim())
+  ) {
+    return res.json({ isSuccess: false });
+  }
+
+  if (isComplete !== undefined && typeof isComplete !== 'boolean') {
     return res.json({ isSuccess: false });
   }
 
@@ -69,50 +81,40 @@ app.put('/api/todos/:id', (req: IUpdateTodoRequest, res) => {
     return res.json({ isSuccess: false });
   }
 
-  if (isComplete !== undefined) {
-    todos[index].isComplete = isComplete;
-  }
-
-  if (content) {
-    todos[index].content = content;
-  }
+  todos[index].isComplete = isComplete ?? todos[index].isComplete;
+  todos[index].content = content ?? todos[index].content;
 
   return res.json({ isSuccess: true });
 });
 
 interface IDeleteTodoRequest extends Request {
-  params: {
+  query: {
     ids: string;
   };
 }
 
-app.delete('/api/todos/:ids', (req: IDeleteTodoRequest, res) => {
-  const ids = req.params.ids.split(',');
-  if (!ids) {
-    return res.json({ isSuccess: false });
-  }
+app.delete('/api/todos', (req: IDeleteTodoRequest, res) => {
+  const ids = req.query.ids?.split(',');
 
-  const indexes = todos.reduce((result, todo, index) => {
-    if (ids.includes(todo.id)) {
-      return [index, ...result];
+  if (ids) {
+    const indexes = todos.reduce((result: number[], todo, index) => {
+      if (ids.includes(todo.id)) {
+        return [index, ...result];
+      }
+
+      return result;
+    }, []);
+
+    if (ids.length !== indexes.length) {
+      return res.json({ isSuccess: false });
     }
 
-    return result;
-  }, [] as number[]);
-
-  if (ids.length !== indexes.length) {
-    return res.json({ isSuccess: false });
+    indexes.forEach((index) => {
+      todos.splice(index, 1);
+    });
+  } else {
+    todos.length = 0;
   }
-
-  indexes.forEach((index) => {
-    todos.splice(index, 1);
-  });
-
-  return res.json({ isSuccess: true });
-});
-
-app.delete('/api/todos', (req, res) => {
-  todos.splice(0, todos.length);
 
   return res.json({ isSuccess: true });
 });
