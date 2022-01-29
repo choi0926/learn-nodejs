@@ -2,7 +2,6 @@ import express, { NextFunction, Request, Response } from 'express';
 import morgan from 'morgan';
 import path from 'path';
 import { nanoid } from 'nanoid';
-import e from 'express';
 
 interface ITodo {
   id: string;
@@ -59,6 +58,7 @@ interface IUpdateTodoRequest extends Request {
 // params는 미들웨어가 필요없음
 app.put('/api/todos/:id', (req: IUpdateTodoRequest, res) => {
   const { id } = req.params;
+
   if (Object.keys(req.body).length === 0) {
     return res.json({ isSuccess: false });
   }
