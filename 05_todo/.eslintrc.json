@@ -16,6 +16,8 @@
     "comma-dangle": "off",
     "arrow-body-style": "off",
     "no-shadow": "off",
-    "operator-linebreak": "off"
+    "operator-linebreak": "off",
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": ["error", { "args": "none" }]
   }
 }
