@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" href="./style/reset.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./style/style.css" />
+    <title>Chat</title>
+  </head>
+
+  <body>
+    <header>
+      <h1>Chat</h1>
+    </header>
+
+    <main>
+      <div class="enter-container">
+        <form>
+          <input type="text" name="nickname" placeholder="Nickname" required />
+          <input
+            type="text"
+            name="room-name"
+            placeholder="Room Name"
+            required
+          />
+
+          <button>Enter Room</button>
+        </form>
+
+        <h2>Created Rooms</h2>
+
+        <ul></ul>
+      </div>
+    </main>
+
+    <script src="./socket.io/socket.io.js"></script>
+    <script src="./script/app.js"></script>
+  </body>
+</html>
