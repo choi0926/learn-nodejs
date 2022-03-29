@@ -29,10 +29,16 @@ server.listen(app.get('port'), () => {
   console.log(`Server running at http://localhost:${app.get('port')}`);
 });
 
-interface IClientToServerEvents {}
-interface IServerToClientEvents {}
+interface IClientToServerEvents {
+  enterRoom: (nickname: string, roomName: string, callback: () => void) => void;
+}
+interface IServerToClientEvents {
+  updateRooms: (rooms: string[]) => void;
+}
 interface IInterServerEvents {}
-interface ISocketDate {}
+interface ISocketDate {
+  nickname: string;
+}
 
 const io = new Server<
   IClientToServerEvents,
@@ -42,7 +48,34 @@ const io = new Server<
 >(server);
 
 io.on('connection', (socket) => {
+  const getRooms = () => {
+    const { rooms, sids } = io.sockets.adapter;
+
+    const publicRoom: string[] = [];
+
+    rooms.forEach((_, key) => {
+      if (!sids.get(key)) {
+        publicRoom.push(key);
+      }
+    });
+
+    return publicRoom;
+  };
   socket.onAny((event) => {
-    console.log(`Socket event :${event}`);
+    console.log(`Socket event : ${event}`);
+  });
+
+  const rooms = getRooms();
+
+  io.sockets.emit('updateRooms', rooms);
+
+  socket.on('enterRoom', (nickname, roomName, callback) => {
+    socket.data.nickname = nickname;
+
+    socket.join(roomName);
+
+    console.log(socket);
+
+    callback();
   });
 });
