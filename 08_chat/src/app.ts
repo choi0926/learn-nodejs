@@ -9,9 +9,7 @@ const app = express();
 app.set('port', 3000);
 
 app.use(morgan(process.env.NODE_ENV === 'product' ? 'combined' : 'dev'));
-app.use(
-  express.static(path.join(__dirname, 'public'), { extensions: ['html'] })
-);
+app.use(express.static(path.join(__dirname, 'public'), { extensions: ['html'] }));
 
 app.use((req, res) => {
   return res.status(404).send('Not Found');
@@ -30,10 +28,12 @@ server.listen(app.get('port'), () => {
 });
 
 interface IClientToServerEvents {
-  enterRoom: (nickname: string, roomName: string, callback: () => void) => void;
+  enterRoom: (nickname: string, roomName: string, callback: (totalUsers: number) => void) => void;
 }
 interface IServerToClientEvents {
   updateRooms: (rooms: string[]) => void;
+  enterRoom: (nickname: string, totalUsers: number) => void;
+  leaveRoom: (nickname: string, totalUsers: number) => void;
 }
 interface IInterServerEvents {}
 interface ISocketDate {
@@ -61,6 +61,13 @@ io.on('connection', (socket) => {
 
     return publicRoom;
   };
+
+  const getTotalUsers = (roomName: string) => {
+    const totalUsers = io.sockets.adapter.rooms.get(roomName)?.size ?? 0;
+
+    return totalUsers;
+  };
+
   socket.onAny((event) => {
     console.log(`Socket event : ${event}`);
   });
@@ -74,8 +81,24 @@ io.on('connection', (socket) => {
 
     socket.join(roomName);
 
-    console.log(socket);
+    const totalUsers = getTotalUsers(roomName);
 
-    callback();
+    socket.to(roomName).emit('enterRoom', nickname, totalUsers);
+
+    const rooms = getRooms();
+
+    io.sockets.emit('updateRooms', rooms);
+
+    callback(totalUsers);
+  });
+
+  socket.on('disconnecting', () => {
+    socket.rooms.forEach((roomName) => {
+      if (socket.data.nickname) {
+        const totalUsers = getTotalUsers(roomName);
+
+        socket.to(roomName).emit('leaveRoom', socket.data.nickname, totalUsers);
+      }
+    });
   });
 });
